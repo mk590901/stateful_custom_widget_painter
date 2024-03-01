@@ -21,7 +21,7 @@ class GraphWidgetState extends State<GraphWidget> {
   bool _startStop = false;
 
   late  int currentCounter = 0;
-  late  StoreWrapper storeWrapper = StoreWrapper(widget.seriesBuffer, 5, 6);
+  late  StoreWrapper storeWrapper = StoreWrapper(widget.seriesBuffer, 5);
 
   final Obtainer
     obtain = Obtainer(const Duration(milliseconds: 24));
