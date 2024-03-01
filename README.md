@@ -8,4 +8,6 @@ The widget described earlier has been significantly simplified while maintaining
 
 ## Movie
 
-[flutter_ecg_drawer.mp4](..%2F..%2F..%2FDownloads%2Fflutter_ecg_drawer.mp4)
+
+https://github.com/mk590901/stateful_custom_widget_painter/assets/125393245/8b8c0762-2c44-46a2-a49a-16cd7a35479a
+
