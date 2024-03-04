@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'custom_widget.dart';
+import 'graph_mode.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -24,48 +25,56 @@ void main() {
                 width: 320,
                 height: 120,
                 seriesBuffer: 128,
+		mode:       GraphMode.overlay
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 200,
+		mode:       GraphMode.flowing
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 300,
+		mode:       GraphMode.overlay
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 250,
+		mode:       GraphMode.flowing
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 300,
+		mode:       GraphMode.overlay
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 128,
+		mode:       GraphMode.flowing
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 256,
+		mode:       GraphMode.overlay
               ),
               SizedBox(height: 16.0),
               GraphWidget(
                 width: 320,
                 height: 120,
                 seriesBuffer: 128,
+		mode:       GraphMode.flowing
               ),
               SizedBox(height: 16.0),
             ],

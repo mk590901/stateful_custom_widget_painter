@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'circular_buffer.dart';
+import 'graph_mode.dart';
 import 'utils.dart';
 
 List<int> rowData = [
@@ -14,6 +15,7 @@ class StoreWrapper {
   late int _drawSeriesLength;   //  Drawable data size per second
   final int _seriesNumber;      //  Data buffer size
   final int _seriesLength;      //  Number of displayed drawable data pieces
+  final GraphMode _mode;  //  Mode
 
   late  CircularBuffer<int> buffer_;
 
@@ -23,7 +25,12 @@ class StoreWrapper {
   late  Path    pathAfter;
   late  Offset  point;
 
-  StoreWrapper(this._seriesLength, this._seriesNumber/*, this._drawSeriesLength*/) {
+  late bool full;
+  late int writeIndex;
+  late int readIndex;
+  late int size;
+
+  StoreWrapper(this._seriesLength, this._seriesNumber, this._mode) {
     _drawSeriesLength = (_seriesLength.toDouble()/(PERIOD.toDouble()/FREQ.toDouble())).toInt() + 1;
     buffer_ = CircularBuffer<int>(_seriesLength*_seriesNumber);
   }
@@ -40,16 +47,7 @@ class StoreWrapper {
     return _drawSeriesLength;
   }
 
-  int period() {
-    int number = (1000/_seriesLength.toDouble()/_drawSeriesLength).toInt();
-    int result = number < 1 ? 1 : number;
-    return result;
-  }
-
-  void updateBuffer(final int counter, final bool update) {
-    if (!update) {
-      return;
-    }
+  void updateBuffer(final int counter) {
     int seriesSize = seriesLength();
     List<int> dataExtracted = extractRangeData(rowData, (counter-1)*seriesSize, seriesSize);
     buffer_.writeRow(dataExtracted);
@@ -123,7 +121,9 @@ class StoreWrapper {
     step = width/(buffer_.capacity()).toDouble();
     double coeff = (height - 2 * shiftH).toDouble()/dv;
 
-    List<int> dataTemp = dataSeries(buffer_);
+    List<int> dataTemp = (_mode == GraphMode.overlay)
+        ? dataSeriesOverlay(buffer_)
+        : dataSeriesNormal(this);
     data = List<double>.filled(dataTemp.length, 0.0);
     for (int i = 0; i < dataTemp.length; i++) {
       data[i] = (maxV - dataTemp[i].toDouble()) * coeff + shiftH;
@@ -175,6 +175,28 @@ class StoreWrapper {
     pathBefore = preparePathBefore(data);
     pathAfter = preparePathAfter(data);
     point = preparePoint(data);
+  }
+
+  void storeCircularBufferParams() {
+    full = buffer_.isFull();
+    writeIndex = buffer_.writeIndex();
+    readIndex = buffer_.readIndex();
+    size = buffer_.size();
+  }
+
+  void restoreCircularBufferParams() {
+    buffer_.setFull(full);
+    buffer_.setWriteIndex(writeIndex);
+    buffer_.setReadIndex(readIndex);
+    buffer_.setSize(size);
+  }
+
+  GraphMode mode() {
+    return _mode;
+  }
+
+  bool isFull() {
+    return buffer_.isFull();
   }
 
 }

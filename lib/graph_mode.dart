@@ -1,0 +1,4 @@
+enum GraphMode {
+  overlay,
+  flowing
+}

@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'store_wrapper.dart';
 import 'circular_buffer.dart';
+import 'graph_mode.dart';
 
 class PathPainter extends CustomPainter {
   int counter;
@@ -40,7 +40,7 @@ class PathPainter extends CustomPainter {
     ..style = PaintingStyle.stroke;
 
   Paint paintMarker = Paint()
-    ..color = Colors.blueGrey //Colors.white12
+    ..color = Colors.blueGrey
     ..strokeWidth = 16.0
     ..style = PaintingStyle.stroke;
 
@@ -48,8 +48,6 @@ class PathPainter extends CustomPainter {
 
   PathPainter.graph(this.counter, this._storeWrapper) {
     buffer = _storeWrapper.buffer();
-    //print('PathPainter.graph.$counter');
-
   }
 
   @override
@@ -59,20 +57,39 @@ class PathPainter extends CustomPainter {
 
   void drawGraph(Size size, Canvas canvas) {
 
-    // Draw a rectangle
+    // Draw a background rectangle
     double shiftH  = size.height/6;
-
-    canvas.drawRect(Rect.fromLTRB(0, 0,
-        size.width, size.height), paint_);
+    canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paint_);
 
     if (counter == 0) {
       return;
     }
-
+  //  Prepare data for drawing  
     _storeWrapper.prepareDrawing(size, shiftH);
+  //  Draw on canvas  
+    drawProcedure(size, canvas);
+  }
 
-    canvas.drawRect(Rect.fromLTRB(_storeWrapper.point.dx, 0, size.width, size.height), paintPrev);
-//    canvas.drawPath(_storeWrapper.path, paintLine);
+  void drawProcedure(Size size, Canvas canvas) {
+    if (_storeWrapper.mode() == GraphMode.overlay) {
+      drawOverlayGraph(canvas, size);
+    }
+    else {
+      drawFlowingGraph(canvas);
+    }
+  }
+
+  void drawFlowingGraph(Canvas canvas) {
+    canvas.drawPath(_storeWrapper.pathBefore, paintLine);
+    canvas.drawPath(_storeWrapper.pathAfter, paintLine);
+    if (!_storeWrapper.isFull()) {
+      canvas.drawCircle(_storeWrapper.point, markerRadius, paintCircle);
+    }
+  }
+
+  void drawOverlayGraph(Canvas canvas, Size size) {
+    canvas.drawRect(
+        Rect.fromLTRB(_storeWrapper.point.dx, 0, size.width, size.height), paintPrev);
     canvas.drawPath(_storeWrapper.pathBefore, paintLine);
     canvas.drawPath(_storeWrapper.pathAfter, paintLineAfter);
     canvas.drawCircle(_storeWrapper.point, markerRadius, paintCircle);
@@ -82,5 +99,6 @@ class PathPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true; // todo - determine if the path has changed
   }
+
 
 }

@@ -73,7 +73,7 @@ class CircularBuffer<T> {
     }
 
     T? value = _buffer[_readIndex];
-    _buffer[_readIndex] = null; // ??????
+    //@_buffer[_readIndex] = null; // ??????
     _size--;
     _readIndex = (_readIndex + 1) % _buffer.length;
     _full = false;
@@ -90,8 +90,15 @@ class CircularBuffer<T> {
     return result;
   }
 
-  bool isFull() {
-    return _full;
+  List<T> getData() {
+    int orderedSize = size();
+    List<T> result = <T>[];
+    int cycles = (orderedSize > size()) ? size() : orderedSize;
+    for (int i = 0; i < cycles; i++) {
+      T? value = read();
+      result.add(value!);
+    }
+    return result;
   }
 
   bool isEmpty() {
@@ -100,10 +107,6 @@ class CircularBuffer<T> {
 
   int capacity() {
     return _buffer.length;
-  }
-
-  int size() {
-    return _size;
   }
 
   T? get(int index) {
@@ -139,9 +142,39 @@ class CircularBuffer<T> {
     return result;
   }
 
+///////////////////////////////////////////////////////////
+  bool isFull() {
+    return _full;
+  }
+
   int writeIndex() {
     return _writeIndex;
   }
+
+  int readIndex() {
+    return _readIndex;
+  }
+
+  int size() {
+    return _size;
+  }
+
+  void setWriteIndex(int writeIndex) {
+    _writeIndex = writeIndex;
+  }
+
+  void setReadIndex(int readIndex) {
+    _readIndex = readIndex;
+  }
+
+  void setSize(int size) {
+    _size = size;
+  }
+
+  void setFull(bool full) {
+    _full = full;
+  }
+
 
 }
 

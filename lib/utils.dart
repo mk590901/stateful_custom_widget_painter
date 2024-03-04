@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'circular_buffer.dart';
+import 'store_wrapper.dart';
 
 List<int> extractData(final List<int> rowData, final int number) {
   if (rowData.isEmpty) {
@@ -126,57 +127,7 @@ int getMinForFullBuffer(final CircularBuffer<int> buffer) {
   return result;
 }
 
-double getMinB2(final CircularBuffer<int> buffer) {
-  int minV = 0;
-  List<int?> rowData = buffer.buffer();
-  if (buffer.size() == buffer.capacity()-1) {
-    minV = getMinForFullBuffer(buffer);
-    for (int i = 1; i < buffer.capacity(); i++) {
-      int? value = rowData[i];
-      if (value != null) {
-        if (value < minV) {
-          minV = value;
-        }
-      }
-    }
-  }
-  else {
-    minV = rowData[0]!;
-    for (int i = 1; i < buffer.size(); i++) {
-      if (rowData[i]! < minV) {
-        minV = rowData[i]!;
-      }
-    }
-  }
-  return minV.toDouble();
-}
-
-double getMaxB2(final CircularBuffer<int> buffer) {
-  int maxV = 0;
-  List<int?> rowData = buffer.buffer();
-  if (buffer.size() == buffer.capacity()-1) {
-    maxV = getMinForFullBuffer(buffer);
-    for (int i = 1; i < buffer.capacity(); i++) {
-      int? value = rowData[i];
-      if (value != null) {
-        if (value > maxV) {
-          maxV = value;
-        }
-      }
-    }
-  }
-  else {
-    maxV = rowData[0]!;
-    for (int i = 1; i < buffer.size(); i++) {
-      if (rowData[i]! > maxV) {
-        maxV = rowData[i]!;
-      }
-    }
-  }
-  return maxV.toDouble();
-}
-
-List<int> dataSeries(CircularBuffer<int> buffer) {
+List<int> dataSeriesOverlay(CircularBuffer<int> buffer) {
   int seriesSize =
     buffer.size() < buffer.capacity() - 1 ? buffer.size() : buffer.capacity();
   List<int> result = List<int>.filled(seriesSize, 0);
@@ -188,5 +139,12 @@ List<int> dataSeries(CircularBuffer<int> buffer) {
       result[i] = result[i - 1];
     }
   }
+  return result;
+}
+
+List<int> dataSeriesNormal(StoreWrapper storeWrapper) {
+  storeWrapper.storeCircularBufferParams();
+  List<int> result = storeWrapper.buffer().getData();
+  storeWrapper.restoreCircularBufferParams();
   return result;
 }

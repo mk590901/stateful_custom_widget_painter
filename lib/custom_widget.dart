@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-
 import 'obtainer.dart';
 import 'path_painter.dart';
 import 'store_wrapper.dart';
+import 'graph_mode.dart';
 
 class GraphWidget extends StatefulWidget {
 
   final double width;
   final double height;
+  final GraphMode mode;
   final int seriesBuffer;
 
-  const GraphWidget({super.key, required this.width, required this.height, required this.seriesBuffer});
+  const GraphWidget({super.key, required this.width, required this.height, required this.seriesBuffer, required this.mode});
 
   @override
   GraphWidgetState createState() => GraphWidgetState();
@@ -21,7 +22,7 @@ class GraphWidgetState extends State<GraphWidget> {
   bool _startStop = false;
 
   late  int currentCounter = 0;
-  late  StoreWrapper storeWrapper = StoreWrapper(widget.seriesBuffer, 5);
+  late  StoreWrapper storeWrapper = StoreWrapper(widget.seriesBuffer, 5, widget.mode);
 
   final Obtainer
     obtain = Obtainer(const Duration(milliseconds: 24));
@@ -35,7 +36,7 @@ class GraphWidgetState extends State<GraphWidget> {
   @override
   Widget build(BuildContext context) {
 
-    storeWrapper.updateBuffer(currentCounter, true);
+    storeWrapper.updateBuffer(currentCounter);
 
     obtain.setState(storeWrapper.drawingFrequency(), this);
 
